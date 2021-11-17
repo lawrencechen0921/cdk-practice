@@ -1,0 +1,10 @@
+type ShoppingItem @model { #Creates a database for ShoppingItem
+  id: ID!
+  ingredient: String
+  quantity: Float
+  unit: String
+}
+
+type Mutation{
+  sendSummaryEmail: Boolean @function(name: "sendSummary-${env}")
+}
