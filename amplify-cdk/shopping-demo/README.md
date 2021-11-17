@@ -1,70 +1,50 @@
-# Getting Started with Create React App
+# Extend Amplify Backend with AWS CDK
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Today, AWS Amplify announces a new amplify add custom command to add any of the 175+ AWS services to an Amplify-created backend using the AWS Cloud Development Kit (CDK) or AWS CloudFormation. The new ability to add custom resources enables developers to add additional resources beyond Amplify’s built-in use cases with a single command.
 
-## Available Scripts
+AWS Amplify is the fastest and easiest way to build cloud-powered mobile and web apps on AWS. Amplify comprises a set of tools and services that enables frontend web and mobile developers to leverage the power of AWS services to build innovative and feature-rich applications. The AWS Amplify CLI is a command line toolchain that helps frontend developers create app backends in the cloud.
 
-In the project directory, you can run:
+## Scenario
 
-### `yarn start`
+![](images/architecture.png)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+We would use this blog to create another prototype for our scenario.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+After this repo, you will be able to learn:
 
-### `yarn test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+* Add a custom AWS resource to an Amplify project
+* Make custom AWS resources compatible with Amplify’s multi-environment workflows
+* How to access custom resources from a Lambda function
 
-### `yarn build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Prerequisites
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+* Install the latest Amplify CLI; version 7 and above required.
+  *  run `npm i -g @aws-amplify/cli`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Task 1: Initialze your React and Amplify project
 
-### `yarn eject`
+* First we have to create a new directory and initialize your Amplify Project.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```bash
+npx create-react-app shopping-demo
+cd shopping-demo
+amplify init -y
+```
+An Amplify project is your starting point for developing your app backend. After an Amplify project is initialized, you can easily add backend resources such as a GraphQL API backed by Amazon DynamoDB via `amplify add api`.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+As you go through the CLI, you’ll be asked to edit your GraphQL schema. The GraphQL schema is going to define your data model and therefore also the underlying infrastructure that Amplify will generate for you.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```bash
+type ShoppingItem @model { #Creates a database for ShoppingItem
+  id: ID!
+  ingredient: String
+  quantity: Float
+  unit: String
+}
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+type Mutation{
+  sendSummaryEmail: Boolean @function(name: "sendSummary-${env}")
+}
+```
